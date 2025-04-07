@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/main.js",
-    "dev": "nodemon src/main.js"
+    "dev": "nodemon src/main.js",
+    "migrate:create": "knex migrate:make",
+    "migrate": "knex migrate:latest"
   },
   "keywords": [],
   "author": "",
@@ -12,9 +14,11 @@
   "description": "",
   "dependencies": {
     "express": "^5.1.0",
-    "knex": "^3.1.0"
+    "knex": "^3.1.0",
+    "mysql2": "^3.14.0"
   },
   "devDependencies": {
+    "dotenv": "^16.4.7",
     "nodemon": "^3.1.9"
   }
 }

@@ -33,5 +33,21 @@ describe('/users', () => {
             expect(res.body.error).toContain(error);
         }
       });
+
+      it('fails on duplicated users', async () => {
+        const user = userGenerator()
+        const res = await request(app).post(basePath).send(user);
+    
+        expect(res.status).toBe(201);
+        expect(res.body).toHaveProperty('id');
+        expect(res.body.nome).toBe(user.nome);
+        expect(res.body.email).toBe(user.email);
+
+        const res2 = await request(app).post(basePath).send(user);
+        expect(res2.status).toBe(500);
+        expect(res2.body).not.toHaveProperty('id');
+        expect(res2.body).toHaveProperty('error');
+        expect(res2.body.error).toContain('Usuário já existe');
+      });
     });
 })

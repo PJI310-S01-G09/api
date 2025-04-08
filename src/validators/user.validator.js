@@ -14,8 +14,18 @@ const createUserSchema = yup.object({
     .matches(/[@$!%*?&#^()\-_=+{}[\]|;:'",.<>\\/~]/, ErrorsMap.PasswordMustHaveSpecialChars)
 });
 
+const validateUserError = (error) => {
+    if (error?.name === 'ValidationError') {
+        return error?.errors;
+    }
+    if (error?.code === 'ER_DUP_ENTRY') {
+        return ['Usuário já existe'];
+    }
+    return error;
+}
+
 const UserErrorsMap = {
     ErrorCreationUser: 'Erro ao criar usuário',
 }
 
-module.exports = { createUserSchema, UserErrorsMap };
+module.exports = { createUserSchema, UserErrorsMap, validateUserError };

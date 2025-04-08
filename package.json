@@ -6,7 +6,10 @@
     "start": "node src/main.js",
     "dev": "nodemon src/main.js",
     "migrate:create": "knex migrate:make",
-    "migrate": "knex migrate:latest"
+    "migrate": "knex migrate:latest",
+    "migrate:reset": "npx knex migrate:rollback --all && npx knex migrate:latest",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +22,10 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.6.0",
     "dotenv": "^16.4.7",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "supertest": "^7.1.0",
+    "vitest": "^3.1.1"
   }
 }

@@ -11,4 +11,5 @@ export const ErrorsMap = {
     PasswordMustHaveLetters: 'A senha deve conter letras',
     PasswordMustHaveNumbers: 'A senha deve conter números',
     PasswordMustHaveSpecialChars: 'A senha deve conter pelo menos um caractere especial',
+    InvalidCPF: 'CPF inválido',
 }

@@ -3,7 +3,13 @@ const tableName = 'schedule'
 
 const ScheduleRepository = {
     create: async (schedule) => {
-        const [id] = await db(tableName).insert(schedule)
+        const { clientId, scheduledAt, serviceDuration , ...scheduleData } = schedule
+        const [id] = await db(tableName).insert({
+            ...scheduleData,
+            client_id: clientId,
+            scheduled_at: scheduledAt,
+            service_duration: serviceDuration
+        })
         return { id, ...schedule }
     },
     update: async (id, schedule) => {

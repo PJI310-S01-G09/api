@@ -10,6 +10,10 @@ const UserRepository = {
         const updatedUser = await db(tableName).where({ id }).update(user).returning('*')
         return updatedUser
     },
+    show: async () => {
+        const users = await db(tableName).select('*')
+        return users
+    },
     index: async (id) => {
         const user = await db(tableName).where({ id }).first()
         return user

@@ -10,9 +10,13 @@ const ClientRepository = {
         const updatedClient = await db(tableName).where({ id }).update(client).returning('*')
         return updatedClient
     },
-    index: async (id) => {
+    show: async (id) => {
         const client = await db(tableName).where({ id }).first()
         return client
+    },
+    index: async () => {
+        const clients = await db(tableName).select('*')
+        return clients
     },
     delete: async (id) => {
         const client = await db(tableName).where({ id }).del()

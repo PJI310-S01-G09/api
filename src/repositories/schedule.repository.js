@@ -16,9 +16,13 @@ const ScheduleRepository = {
         const updatedSchedule = await db(tableName).where({ id }).update(schedule).returning('*')
         return updatedSchedule
     },
-    index: async (id) => {
+    show: async (id) => {
         const schedule = await db(tableName).where({ id }).first()
         return schedule
+    },
+    index: async () => {
+        const schedules = await db(tableName).select('*')
+        return schedules
     },
     delete: async (id) => {
         const schedule = await db(tableName).where({ id }).del()

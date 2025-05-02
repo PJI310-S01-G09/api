@@ -18,7 +18,28 @@ const ClientService = {
             const errorMessage = validateClientError(error)
             return [null, errorMessage || [ClientErrorsMap.ErrorCreationClient]]
         }
-    }
+    },
+    show: async (id) => {
+        try {
+            const client = await ClientRepository.show(id)
+            if (!client || client.length === 0) {
+                return [null, [ClientErrorsMap.ClientNotFound]]
+            }
+            return [client, null]
+        } catch (error) {
+            console.error(errorName, error)
+            return [null, [ClientErrorsMap.ErrorShowClient]]
+        }
+    },
+    index: async () => {
+        try {
+            const clients = await ClientRepository.index()
+            return [clients, null]
+        } catch (error) {
+            console.error(errorName, error)
+            return [null, [ClientErrorsMap.ErrorShowClient]]
+        }
+    },
 }
 
 module.exports = ClientService

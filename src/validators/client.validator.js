@@ -23,6 +23,8 @@ const validateClientError = (error) => {
 
 const ClientErrorsMap = {
     ErrorCreationClient: 'Erro ao criar cliente',
+    ClientNotFound: 'Cliente não encontrado',
+    ErrorShowClient: 'Erro ao buscar cliente',
 }
 
 module.exports = { createClientSchema, ClientErrorsMap, validateClientError };

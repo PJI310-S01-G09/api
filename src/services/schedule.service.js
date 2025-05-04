@@ -9,6 +9,14 @@ const ScheduleService = {
         try {
             const scheduleToCreate = await createScheduleSchema.validate(schedule)
 
+            const start = new Date(scheduleToCreate.scheduledAt)
+            const end = new Date(start.getTime() + scheduleToCreate.serviceDuration * 60000)
+
+            const conflict = await ScheduleRepository.findConflict(start, end)
+            if (conflict) {
+                return [null, [ScheduleErrorsMap.ErrorNotPermittedScheduleDueToConflict]]
+            }
+
             let clientId = scheduleToCreate.clientId
 
             if (!clientId && scheduleToCreate.client) {
@@ -17,7 +25,7 @@ const ScheduleService = {
             }
 
             if (!clientId) {
-                return [null, ['Client ID é obrigatório ou client deve ser enviado']]
+                return [null, [ScheduleErrorsMap.ErrorNotSentClient]]
             }
 
             const newSchedule = await ScheduleRepository.create({

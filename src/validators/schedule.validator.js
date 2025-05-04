@@ -36,6 +36,8 @@ const validateScheduleError = (error) => {
 
 const ScheduleErrorsMap = {
   ErrorCreationSchedule: "Erro ao criar agendamento",
+  ErrorNotPermittedScheduleDueToConflict: "Agendamento não permitido - Conflito de horários",
+  ErrorNotSentClient: "Informações do cliente necessárias",
 };
 
 module.exports = {

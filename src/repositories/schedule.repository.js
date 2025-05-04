@@ -22,12 +22,38 @@ const ScheduleRepository = {
     return updatedSchedule;
   },
   show: async (id) => {
-    const schedule = await db(tableName).where({ id }).first();
+    const schedule = await db(tableName)
+      .leftJoin("clients", "schedule.client_id", "clients.id")
+      .where("schedule.id", id)
+      .select(
+        "schedule.*",
+        "clients.id as client_id",
+        "clients.name as client_name",
+        "clients.email as client_email",
+        "clients.phone as client_phone",
+        "clients.cpf as client_cpf",
+        "clients.created_at as client_created_at",
+        "clients.updated_at as client_updated_at"
+      )
+      .first();
+  
     return mapScheduleFields(schedule);
   },
   index: async () => {
-    const schedules = await db(tableName).select("*");
-    return schedules.map(schedule => mapScheduleFields(schedule));
+    const schedules = await db(tableName)
+      .leftJoin("clients", "schedule.client_id", "clients.id")
+      .select(
+        "schedule.*",
+        "clients.id as client_id",
+        "clients.name as client_name",
+        "clients.email as client_email",
+        "clients.phone as client_phone",
+        "clients.cpf as client_cpf",
+        "clients.created_at as client_created_at",
+        "clients.updated_at as client_updated_at"
+      );
+  
+    return schedules.map(mapScheduleFields);
   },
   delete: async (id) => {
     const schedule = await db(tableName).where({ id }).del();

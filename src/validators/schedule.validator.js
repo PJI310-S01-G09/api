@@ -44,17 +44,31 @@ const ScheduleErrorsMap = {
 };
 
 function mapScheduleFields(schedule) {
-  if (!schedule) return null;
-
-  return {
-    id: schedule.id,
-    clientId: schedule.client_id,
-    scheduledAt: schedule.scheduled_at,
-    serviceDuration: schedule.service_duration,
-    createdAt: schedule.created_at,
-    updatedAt: schedule.updated_at,
-  };
-}
+    if (!schedule) return null;
+  
+    const client = schedule.client_id
+      ? {
+          id: schedule.client_id,
+          name: schedule.client_name,
+          email: schedule.client_email,
+          phone: schedule.client_phone,
+          cpf: schedule.client_cpf,
+          createdAt: schedule.client_created_at,
+          updatedAt: schedule.client_updated_at,
+        }
+      : null;
+  
+    return {
+      id: schedule.id,
+      clientId: schedule.client_id,
+      scheduledAt: schedule.scheduled_at,
+      serviceDuration: schedule.service_duration,
+      createdAt: schedule.created_at,
+      updatedAt: schedule.updated_at,
+      ...(client ? { client } : {})
+    };
+  }
+  
 
 module.exports = {
   createScheduleSchema,

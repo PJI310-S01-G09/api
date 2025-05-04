@@ -9,15 +9,20 @@ function generateFakeCPF() {
 }
 
 /**
- * Gera um objeto de agendamento com data futura (ou ajustada)
- * @param {number} daysOffset - dias de deslocamento (ex: 2 = +2 dias, -1 = ontem)
- * @param {number} duration - duração do serviço em minutos (default: 60)
+ * Generates a schedule object with a future or offset date
+ * @param {number} [daysOffset] - Optional. Number of days to shift (e.g., 2 = in 2 days, -1 = yesterday). If omitted, a random day ahead is used.
+ * @param {number} duration - Duration of the service in minutes (default: 60)
  * @returns {{ scheduledAt: string, serviceDuration: number }}
  */
-export const scheduleGenerator = (daysOffset = 1, duration = 60) => {
+export const scheduleGenerator = (daysOffset, duration = 60) => {
   const now = new Date();
   const scheduledDate = new Date(now);
-  scheduledDate.setDate(now.getDate() + daysOffset);
+
+  const offset = typeof daysOffset === 'number'
+    ? daysOffset
+    : faker.number.int({ min: 1, max: 1000 });
+
+  scheduledDate.setDate(now.getDate() + offset);
 
   const hour = faker.number.int({ min: 8, max: 17 });
   const minute = faker.helpers.arrayElement([0, 15, 30, 45]);
@@ -30,7 +35,7 @@ export const scheduleGenerator = (daysOffset = 1, duration = 60) => {
   };
 };
 
-export const scheduleGeneratorWithClient = (daysOffset = 1, duration = 60) => ({
+export const scheduleGeneratorWithClient = (daysOffset, duration = 60) => ({
   ...scheduleGenerator(daysOffset, duration),
   client: {
     name: faker.person.fullName(),

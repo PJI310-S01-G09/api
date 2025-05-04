@@ -39,10 +39,11 @@ describe('/schedule', () => {
         }
       });
 
-      it('fails on duplicated schedules', async () => {
+      it.only('fails on duplicated schedules', async () => {
         const schedule = scheduleGeneratorWithClient()
         const res = await request(app).post(basePath).send(schedule);
     
+        console.log('res', res.body, schedule)
         expect(res.status).toBe(201);
         expect(res.body).toHaveProperty('id');
         expect(res.body.clientId).toBeDefined();

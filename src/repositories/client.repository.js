@@ -21,6 +21,23 @@ const ClientRepository = {
     delete: async (id) => {
         const client = await db(tableName).where({ id }).del()
         return client
+    },
+    createOrUpdateByCPFOrEmail: async (client) => {
+        const existingClient = await db(tableName)
+            .where(function () {
+                this.where('cpf', client.cpf).orWhere('email', client.email);
+            })
+            .first();
+    
+        if (existingClient) {
+            await db(tableName)
+                .where({ id: existingClient.id })
+                .update(client);
+            return { id: existingClient.id, ...client };
+        }
+    
+        const [id] = await db(tableName).insert(client);
+        return { id, ...client };
     }
 }
 

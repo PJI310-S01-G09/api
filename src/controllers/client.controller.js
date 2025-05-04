@@ -9,7 +9,6 @@ const ClientController = {
         return res.status(201).json(client)
     },
     show: async (req, res) => {
-        console.log('show', req.params, req.path)
         const { id } = req.params
         const [client, error] = await ClientService.show(id)
         if (!client) {

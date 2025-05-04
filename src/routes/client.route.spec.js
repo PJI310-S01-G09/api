@@ -82,6 +82,7 @@ describe("/clients", () => {
       const res = await request(app).get(basePath);
       expect(res.status).toBe(200);
       expect(res.body).toBeInstanceOf(Array);
+      expect(res.body.length).toBeGreaterThan(0);
     });
   });
 

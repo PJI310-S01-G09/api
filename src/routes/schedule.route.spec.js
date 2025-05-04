@@ -39,7 +39,7 @@ describe('/schedule', () => {
         }
       });
 
-      it.only('fails on duplicated schedules', async () => {
+      it('fails on duplicated schedules', async () => {
         const schedule = scheduleGeneratorWithClient()
         const res = await request(app).post(basePath).send(schedule);
     

@@ -36,12 +36,29 @@ const validateScheduleError = (error) => {
 
 const ScheduleErrorsMap = {
   ErrorCreationSchedule: "Erro ao criar agendamento",
-  ErrorNotPermittedScheduleDueToConflict: "Agendamento não permitido - Conflito de horários",
+  ErrorNotPermittedScheduleDueToConflict:
+    "Agendamento não permitido - Conflito de horários",
   ErrorNotSentClient: "Informações do cliente necessárias",
+  ScheduleNotFound: "Agendamento não encontrado",
+  ErrorShowSchedule: "Erro ao mostrar agendamento",
 };
+
+function mapScheduleFields(schedule) {
+  if (!schedule) return null;
+
+  return {
+    id: schedule.id,
+    clientId: schedule.client_id,
+    scheduledAt: schedule.scheduled_at,
+    serviceDuration: schedule.service_duration,
+    createdAt: schedule.created_at,
+    updatedAt: schedule.updated_at,
+  };
+}
 
 module.exports = {
   createScheduleSchema,
   ScheduleErrorsMap,
   validateScheduleError,
+  mapScheduleFields,
 };

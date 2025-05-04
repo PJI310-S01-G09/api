@@ -40,7 +40,28 @@ const ScheduleService = {
             const errorMessage = validateScheduleError(error)
             return [null, errorMessage || [ScheduleErrorsMap.ErrorCreationSchedule]]
         }
-    }
+    },
+    show: async (id) => {
+        try {
+            const schedule = await ScheduleRepository.show(id)
+            if (!schedule || schedule.length === 0) {
+                return [null, [ScheduleErrorsMap.ScheduleNotFound]]
+            }
+            return [schedule, null]
+        } catch (error) {
+            console.error(errorName, error)
+            return [null, [ScheduleErrorsMap.ErrorShowSchedule]]
+        }
+    },
+    index: async () => {
+        try {
+            const schedules = await ScheduleRepository.index()
+            return [schedules, null]
+        } catch (error) {
+            console.error(errorName, error)
+            return [null, [ScheduleErrorsMap.ErrorShowSchedule]]
+        }
+    },
 }
 
 module.exports = ScheduleService

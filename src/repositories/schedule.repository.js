@@ -1,4 +1,5 @@
 const db = require("../db/conn.js");
+const { mapScheduleFields } = require("../validators/schedule.validator.js");
 const tableName = "schedule";
 
 const ScheduleRepository = {
@@ -22,11 +23,11 @@ const ScheduleRepository = {
   },
   show: async (id) => {
     const schedule = await db(tableName).where({ id }).first();
-    return schedule;
+    return mapScheduleFields(schedule);
   },
   index: async () => {
     const schedules = await db(tableName).select("*");
-    return schedules;
+    return schedules.map(schedule => mapScheduleFields(schedule));
   },
   delete: async (id) => {
     const schedule = await db(tableName).where({ id }).del();

@@ -11,6 +11,29 @@ const createClientSchema = yup.object({
     .length(11, ErrorsMap.InvalidCPF)
 });
 
+const mapClientFields = (client) => {
+    if (!client) return null;
+  
+    const schedules = client.schedules?.map(schedule => ({
+      id: schedule.id,
+      scheduledAt: schedule.scheduled_at,
+      serviceDuration: schedule.service_duration,
+      createdAt: schedule.created_at,
+      updatedAt: schedule.updated_at,
+    })) || [];
+  
+    return {
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      phone: client.phone,
+      cpf: client.cpf,
+      createdAt: client.created_at,
+      updatedAt: client.updated_at,
+      schedules,
+    };
+  }
+
 const validateClientError = (error) => {
     if (error?.name === 'ValidationError') {
         return error?.errors;
@@ -25,6 +48,7 @@ const ClientErrorsMap = {
     ErrorCreationClient: 'Erro ao criar cliente',
     ClientNotFound: 'Cliente não encontrado',
     ErrorShowClient: 'Erro ao buscar cliente',
+    ErrorShowClients: 'Erro ao buscar clientes',
 }
 
-module.exports = { createClientSchema, ClientErrorsMap, validateClientError };
+module.exports = { createClientSchema, ClientErrorsMap, validateClientError, mapClientFields };

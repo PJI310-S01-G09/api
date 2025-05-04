@@ -28,7 +28,7 @@ const ClientService = {
             return [client, null]
         } catch (error) {
             console.error(errorName, error)
-            return [null, [ClientErrorsMap.ErrorShowClient]]
+            return [null, [ClientErrorsMap.ErrorShowClients]]
         }
     },
     index: async () => {

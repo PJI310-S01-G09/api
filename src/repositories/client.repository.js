@@ -1,4 +1,5 @@
 const db = require('../db/conn.js')
+const { mapClientFields } = require('../validators/client.validator.js')
 const tableName = 'clients'
 
 const ClientRepository = {
@@ -11,12 +12,36 @@ const ClientRepository = {
         return updatedClient
     },
     show: async (id) => {
-        const client = await db(tableName).where({ id }).first()
-        return client
+        const client = await db(tableName).where({ id }).first();
+        if (!client) return null;
+    
+        const schedules = await db('schedule')
+            .where({ client_id: id })
+            .select('id', 'scheduled_at', 'service_duration', 'created_at', 'updated_at');
+    
+        return mapClientFields({ ...client, schedules });
     },
     index: async () => {
-        const clients = await db(tableName).select('*')
-        return clients
+        const clients = await db(tableName).select('*');
+    
+        const clientIds = clients.map(c => c.id);
+    
+        const schedules = await db('schedule')
+            .whereIn('client_id', clientIds)
+            .select('id', 'client_id', 'scheduled_at', 'service_duration', 'created_at', 'updated_at');
+    
+        const scheduleMap = schedules.reduce((acc, s) => {
+            acc[s.client_id] = acc[s.client_id] || [];
+            acc[s.client_id].push(s);
+            return acc;
+        }, {});
+    
+        return clients.map(client => {
+            return mapClientFields({
+                ...client,
+                schedules: scheduleMap[client.id] || []
+            });
+        });
     },
     delete: async (id) => {
         const client = await db(tableName).where({ id }).del()

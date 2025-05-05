@@ -44,11 +44,14 @@ const validateClientError = (error) => {
     return error;
 }
 
-const ClientErrorsMap = {
+const ClientMessageMap = {
     ErrorCreationClient: 'Erro ao criar cliente',
     ClientNotFound: 'Cliente não encontrado',
     ErrorShowClient: 'Erro ao buscar cliente',
     ErrorShowClients: 'Erro ao buscar clientes',
+    SuccessoOnCreateClient: 'Cliente criado com sucesso',
+    SuccessOnGetClient: 'Cliente encontrado com sucesso',
+    SuccessOnGetClients: 'Clientes encontrados com sucesso',
 }
 
-module.exports = { createClientSchema, ClientErrorsMap, validateClientError, mapClientFields };
+module.exports = { createClientSchema, ClientMessageMap, validateClientError, mapClientFields };

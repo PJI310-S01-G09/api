@@ -1,5 +1,5 @@
 const ClientRepository = require('../repositories/client.repository.js')
-const { createClientSchema, ClientErrorsMap, validateClientError } = require('../validators/client.validator.js')
+const { createClientSchema, ClientMessageMap, validateClientError } = require('../validators/client.validator.js')
 
 const errorName = 'ClientServiceError'
 
@@ -16,19 +16,19 @@ const ClientService = {
         } catch (error) {
             console.error(errorName, error)
             const errorMessage = validateClientError(error)
-            return [null, errorMessage || [ClientErrorsMap.ErrorCreationClient]]
+            return [null, errorMessage || [ClientMessageMap.ErrorCreationClient]]
         }
     },
     show: async (id) => {
         try {
             const client = await ClientRepository.show(id)
             if (!client || client.length === 0) {
-                return [null, [ClientErrorsMap.ClientNotFound]]
+                return [null, [ClientMessageMap.ClientNotFound]]
             }
             return [client, null]
         } catch (error) {
             console.error(errorName, error)
-            return [null, [ClientErrorsMap.ErrorShowClients]]
+            return [null, [ClientMessageMap.ErrorShowClients]]
         }
     },
     index: async () => {
@@ -37,7 +37,7 @@ const ClientService = {
             return [clients, null]
         } catch (error) {
             console.error(errorName, error)
-            return [null, [ClientErrorsMap.ErrorShowClient]]
+            return [null, [ClientMessageMap.ErrorShowClient]]
         }
     },
 }

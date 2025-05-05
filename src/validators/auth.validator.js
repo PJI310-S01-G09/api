@@ -8,6 +8,7 @@ const loginSchema = yup.object({
 const AuthMessageMap = {
     ErrorInvalidLogin: 'Login inválido',
     SuccessOnLogin: 'Login realizado com sucesso',
+    ErrorInvalidToken: 'Token inválido',
 }
 
 module.exports = { loginSchema, AuthMessageMap };

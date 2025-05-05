@@ -26,6 +26,7 @@ const validateUserError = (error) => {
 
 const UserErrorsMap = {
     ErrorCreationUser: 'Erro ao criar usuário',
+    ErrorUserNotFound: 'Usuário não encontrado',
 }
 
 module.exports = { createUserSchema, UserErrorsMap, validateUserError };

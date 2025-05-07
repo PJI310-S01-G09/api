@@ -8,8 +8,13 @@ const AuthController = {
 
         const [token, error] = await AuthService.login(email, password)
         if (!token) {
-            return res.status(500).json(mountResponse(null, error))
+            const response = mountResponse(null, error)
+            if (error === AuthMessageMap.ErrorInvalidLogin){
+                return res.status(401).json(response)
+            }
+            return res.status(500).json(response)
         }
+
         return res.status(201).json(mountResponse(token, null, AuthMessageMap.SuccessOnLogin))
     },
 }

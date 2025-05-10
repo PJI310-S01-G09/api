@@ -1,5 +1,6 @@
 const dotenv = require('dotenv')
 const app = require('./app.js')
+const { currentDate } = require('./utils/currentDate.js')
 dotenv.config()
 
 const {
@@ -9,5 +10,5 @@ const {
 const appPort = Number(PORT) || 3000
 
 app.listen(appPort, () => {
-    console.log(`Server is running on http://localhost:${appPort}`)
+    console.log(`[${currentDate()}] Server is running on http://localhost:${appPort}`)
 })

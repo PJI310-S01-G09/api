@@ -1,3 +1,5 @@
+import request from "supertest";
+import app from "../src/app.js";
 const { faker } = require("@faker-js/faker");
 
 function generateFakeCPF() {
@@ -10,34 +12,37 @@ function generateFakeCPF() {
 
 import { faker } from "@faker-js/faker";
 
-export const scheduleGenerator = (daysOffset, duration = 60) => {
-  const now = new Date();
-  const scheduledDate = new Date(now);
+export async function getNextAvailableHour() {
+  const res = await request(app).get("/schedule/free-hours");
 
-  const offset =
-    typeof daysOffset === "number"
-      ? daysOffset
-      : faker.number.int({ min: 1, max: 1000 });
+  if (res.status !== 200 || !res.body.data || res.body.data.length === 0) {
+    throw new Error("Nenhum horário disponível encontrado");
+  }
 
-  scheduledDate.setDate(now.getDate() + offset);
+  const { date, slots } = res.body.data[0];
 
-  const openingHour = 8;
-  const closingHour = 18;
-  const maxStartHour = closingHour - Math.ceil(duration / 60);
-
-  const hour = faker.number.int({ min: openingHour, max: maxStartHour });
-  const minute = faker.helpers.arrayElement([0, 15, 30, 45]);
-
-  scheduledDate.setHours(hour, minute, 0, 0);
+  if (!slots || slots.length === 0) {
+    throw new Error("Nenhum slot disponível encontrado");
+  }
 
   return {
-    scheduledAt: scheduledDate.toISOString(),
+    date,
+    hour: slots[0]
+  }
+}
+
+export async function scheduleGenerator(duration = 60) {
+  const { date, hour } = await getNextAvailableHour()
+
+  const scheduledAt = `${date}T${hour}:00`;
+  return {
+    scheduledAt: scheduledAt,
     serviceDuration: duration,
   };
-};
+}
 
-export const scheduleGeneratorWithClient = (daysOffset, duration = 60) => ({
-  ...scheduleGenerator(daysOffset, duration),
+export const scheduleGeneratorWithClient = async (duration = 60) => ({
+  ...(await scheduleGenerator(duration)),
   client: {
     name: faker.person.fullName(),
     email: faker.internet.email(),

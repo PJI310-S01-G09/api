@@ -3,10 +3,11 @@ import request from "supertest";
 import app from "../app.js";
 import { clientGenerator } from "../../tests/client.generator.js";
 import {
-  scheduleGenerator,
+  getNextAvailableHour,
   scheduleGeneratorWithClient,
 } from "../../tests/schedule.generator.js";
 import { loginE2E } from "../../tests/login.e2e-tests.js";
+import moment from "moment";
 
 const basePath = "/schedule";
 
@@ -18,15 +19,8 @@ describe("/schedule", () => {
   });
   describe("POST /schedule", () => {
     it("creates successfully a schedule", async () => {
-      const client = clientGenerator();
-      const schedule = scheduleGenerator();
-      const body = {
-        ...schedule,
-        client,
-      }
-      const res = await request(app)
-        .post(basePath)
-        .send(body);
+      const body = await scheduleGeneratorWithClient()
+      const res = await request(app).post(basePath).send(body);
 
       expect(res.status).toBe(201);
       expect(res.body.data).toHaveProperty("id");
@@ -38,12 +32,12 @@ describe("/schedule", () => {
     it("fails on missing required fields", async () => {
       const missingFieldsBodies = {
         scheduledAt: {
-          body: { ...scheduleGeneratorWithClient(), scheduledAt: undefined },
+          body: { ...await scheduleGeneratorWithClient(), scheduledAt: undefined },
           error: "scheduledAt is a required field",
         },
         serviceDuration: {
           body: {
-            ...scheduleGeneratorWithClient(),
+            ...await scheduleGeneratorWithClient(),
             serviceDuration: undefined,
           },
           error: "serviceDuration is a required field",
@@ -61,7 +55,7 @@ describe("/schedule", () => {
     });
 
     it("fails on duplicated schedules", async () => {
-      const schedule = scheduleGeneratorWithClient();
+      const schedule = await scheduleGeneratorWithClient();
       const res = await request(app).post(basePath).send(schedule);
 
       expect(res.status).toBe(201);
@@ -77,6 +71,47 @@ describe("/schedule", () => {
       expect(res2.body.error).toContain(
         "Agendamento não permitido - Conflito de horários"
       );
+    });
+
+    it("fails when scheduling outside business hours", async () => {
+      const client = clientGenerator();
+
+      const now = new Date();
+      const date = new Date(now);
+      date.setDate(date.getDate() + 2);
+      date.setHours(7, 0, 0, 0);
+
+      const body = {
+        client,
+        scheduledAt: date.toISOString(),
+        serviceDuration: 60,
+      };
+
+      const res = await request(app).post(basePath).send(body);
+
+      expect(res.status).toBe(500);
+      expect(res.body.error).toContain(
+        "Agendamento não permitido: fora do horário de funcionamento."
+      );
+    });
+
+    it("fails when scheduling conflicts with existing schedule", async () => {
+      const { date, hour } = await getNextAvailableHour()
+      const nextAvailableHour = moment(`${date} ${hour}`, 'YYYY-MM-DD HH:mm')
+      const body1 = {
+        client: clientGenerator(),
+        serviceDuration: 60,
+        scheduledAt: nextAvailableHour.toISOString()
+      };
+
+      const res1 = await request(app).post(basePath).send(body1);
+      expect(res1.status).toBe(201);
+
+      const body2 = {...body1, scheduledAt: nextAvailableHour.add(20, "minutes").toISOString()};
+      
+      const res2 = await request(app).post(basePath).send(body2);
+      expect(res2.status).toBe(500);
+      expect(res2.body.error).toContain("Agendamento não permitido - Conflito de horários");
     });
   });
 });

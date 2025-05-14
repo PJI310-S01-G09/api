@@ -25,7 +25,7 @@ const ScheduleService = {
       const dateStr = start.format("YYYY-MM-DD");
       const exceptions = await BusinessExceptionsRepository.show();
       const isBlockedDate = exceptions.find(
-        (e) => e.date === dateStr && e.is_open === false
+        (e) => e.date === dateStr && e.isOpen === false
       );
       if (isBlockedDate) {
         return [
@@ -56,7 +56,11 @@ const ScheduleService = {
       const bhEndMinutes = businessEnd.hours() * 60 + businessEnd.minutes();
 
       const endMinutes = end.hours() * 60 + end.minutes();
-      if (startMinutes < bhStartMinutes || endMinutes > bhEndMinutes) {
+      if (
+        startMinutes < bhStartMinutes ||
+        endMinutes > bhEndMinutes ||
+        start.isBefore(moment())
+      ) {
         return [
           null,
           [ScheduleMessageMap.ErrorNotPermittedDueToOutsideBusinessHours],
@@ -119,6 +123,81 @@ const ScheduleService = {
     try {
       const schedules = await ScheduleRepository.index();
       return [schedules, null];
+    } catch (error) {
+      console.error(errorName, error);
+      return [null, [ScheduleMessageMap.ErrorShowSchedule]];
+    }
+  },
+  freeHours: async () => {
+    try {
+      const availableDays = [];
+      const today = moment().startOf("day");
+      const daysToCheck = 20;
+      const intervalMinutes = 30;
+
+      const businessHoursList = await BusinessHoursRepository.show();
+      const exceptions = await BusinessExceptionsRepository.show();
+      const allSchedules = await ScheduleRepository.index();
+
+      // Consider only schedules from today onward
+      const futureScheduled = allSchedules.filter((s) =>
+        moment(s.scheduledAt).isSameOrAfter(today, "day")
+      );
+
+      for (let i = 0; i < daysToCheck; i++) {
+        const date = today.clone().add(i, "days");
+        const dateStr = date.format("YYYY-MM-DD");
+        const weekday = date.day();
+
+        const isException = exceptions.find(
+          (e) => e.date === dateStr && e.isOpen === false
+        );
+        if (isException) continue;
+
+        const bh = businessHoursList.find((b) => b.weekday === weekday);
+        if (!bh || !bh.isOpen) continue;
+
+        const slots = [];
+        const start = moment(
+          `${dateStr} ${bh.startTime}`,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        const end = moment(`${dateStr} ${bh.endTime}`, "YYYY-MM-DD HH:mm:ss");
+
+        for (
+          let slot = start.clone();
+          slot.isBefore(end);
+          slot.add(intervalMinutes, "minutes")
+        ) {
+          const slotStart = slot.clone();
+          const slotEnd = slot.clone().add(intervalMinutes, "minutes");
+
+          if (slotStart.isSame(today, "day") && slotStart.isBefore(moment()))
+            continue;
+
+          const conflict = futureScheduled.find((s) => {
+            const scheduledStart = moment(s.scheduledAt);
+            const scheduledEnd = scheduledStart
+              .clone()
+              .add(s.serviceDuration, "minutes");
+
+            return (
+              slotStart.isBefore(scheduledEnd) &&
+              slotEnd.isAfter(scheduledStart)
+            );
+          });
+
+          if (!conflict) {
+            slots.push(slotStart.format("HH:mm"));
+          }
+        }
+
+        if (slots.length > 0) {
+          availableDays.push({ date: dateStr, slots: slots });
+        }
+      }
+
+      return [availableDays, null];
     } catch (error) {
       console.error(errorName, error);
       return [null, [ScheduleMessageMap.ErrorShowSchedule]];

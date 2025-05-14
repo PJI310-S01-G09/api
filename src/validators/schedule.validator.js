@@ -41,6 +41,7 @@ const ScheduleMessageMap = {
   ErrorNotSentClient: "Informações do cliente necessárias",
   ScheduleNotFound: "Agendamento não encontrado",
   ErrorShowSchedule: "Erro ao mostrar agendamento",
+  ErrorShowFreeHours: "Erro ao mostrar horários disponíveis",
   SuccessoOnCreateSchedule: "Agendamento criado com sucesso",
   SuccessOnGetSchedule: "Agendamento encontrado com sucesso",
   SuccessOnGetSchedules: "Agendamentos encontrados com sucesso",

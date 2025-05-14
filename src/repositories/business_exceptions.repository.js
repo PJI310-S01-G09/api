@@ -26,7 +26,12 @@ const BusinessExceptionsRepository = {
     if (isOpen) query.where({ is_open: isOpen });
 
     const exceptions = await query.select('*');
-    return exceptions;
+    return exceptions.map(e => ({
+      id: e.id,
+      date: e.date,
+      reason: e.reason,
+      isOpen: e.is_open
+    }));
   },
 
   index: async (id) => {

@@ -25,6 +25,13 @@ const ScheduleController = {
         }
         return res.status(200).json(mountResponse(schedules, null, ScheduleMessageMap.SuccessOnGetSchedules))
     },
+    freeHours: async (req, res) => {
+        const [schedules, error] = await ScheduleService.freeHours()
+        if (!schedules) {
+            return res.status(500).json(mountResponse(null, error))
+        }
+        return res.status(200).json(mountResponse(schedules, null, ScheduleMessageMap.SuccessOnGetFreeHours))
+    }
 }
 
 module.exports = ScheduleController

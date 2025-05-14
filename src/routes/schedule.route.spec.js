@@ -64,12 +64,11 @@ describe("/schedule", () => {
       const schedule = scheduleGeneratorWithClient();
       const res = await request(app).post(basePath).send(schedule);
 
-      console.log("res", res.body, schedule);
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty("id");
-      expect(res.body.clientId).toBeDefined();
-      expect(res.body.clientId).toBeGreaterThanOrEqual(1);
-      expect(res.body.scheduledAt).toBeDefined();
+      expect(res.body.data).toHaveProperty("id");
+      expect(res.body.data.clientId).toBeDefined();
+      expect(res.body.data.clientId).toBeGreaterThanOrEqual(1);
+      expect(res.body.data.scheduledAt).toBeDefined();
 
       const res2 = await request(app).post(basePath).send(schedule);
       expect(res2.status).toBe(500);

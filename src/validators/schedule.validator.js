@@ -41,37 +41,40 @@ const ScheduleMessageMap = {
   ErrorNotSentClient: "Informações do cliente necessárias",
   ScheduleNotFound: "Agendamento não encontrado",
   ErrorShowSchedule: "Erro ao mostrar agendamento",
-  SuccessoOnCreateSchedule: 'Agendamento criado com sucesso',
-  SuccessOnGetSchedule: 'Agendamento encontrado com sucesso',
-  SuccessOnGetSchedules: 'Agendamentos encontrados com sucesso',
+  SuccessoOnCreateSchedule: "Agendamento criado com sucesso",
+  SuccessOnGetSchedule: "Agendamento encontrado com sucesso",
+  SuccessOnGetSchedules: "Agendamentos encontrados com sucesso",
+  ErrorNotPermittedDueToBusinessClosed:
+    "Agendamento não permitido: a loja está fechada neste dia.",
+  ErrorNotPermittedDueToOutsideBusinessHours:
+    "Agendamento não permitido: fora do horário de funcionamento.",
 };
 
 function mapScheduleFields(schedule) {
-    if (!schedule) return null;
-  
-    const client = schedule.client_id
-      ? {
-          id: schedule.client_id,
-          name: schedule.client_name,
-          email: schedule.client_email,
-          phone: schedule.client_phone,
-          cpf: schedule.client_cpf,
-          createdAt: schedule.client_created_at,
-          updatedAt: schedule.client_updated_at,
-        }
-      : null;
-  
-    return {
-      id: schedule.id,
-      clientId: schedule.client_id,
-      scheduledAt: schedule.scheduled_at,
-      serviceDuration: schedule.service_duration,
-      createdAt: schedule.created_at,
-      updatedAt: schedule.updated_at,
-      ...(client ? { client } : {})
-    };
-  }
-  
+  if (!schedule) return null;
+
+  const client = schedule.client_id
+    ? {
+        id: schedule.client_id,
+        name: schedule.client_name,
+        email: schedule.client_email,
+        phone: schedule.client_phone,
+        cpf: schedule.client_cpf,
+        createdAt: schedule.client_created_at,
+        updatedAt: schedule.client_updated_at,
+      }
+    : null;
+
+  return {
+    id: schedule.id,
+    clientId: schedule.client_id,
+    scheduledAt: schedule.scheduled_at,
+    serviceDuration: schedule.service_duration,
+    createdAt: schedule.created_at,
+    updatedAt: schedule.updated_at,
+    ...(client ? { client } : {}),
+  };
+}
 
 module.exports = {
   createScheduleSchema,

@@ -1,6 +1,6 @@
 const ScheduleRepository = require('../repositories/schedule.repository.js')
 const ClientRepository = require('../repositories/client.repository.js')
-const { createScheduleSchema, ScheduleErrorsMap, validateScheduleError } = require('../validators/schedule.validator.js')
+const { createScheduleSchema, ScheduleMessageMap, validateScheduleError } = require('../validators/schedule.validator.js')
 
 const errorName = 'ScheduleServiceError'
 
@@ -14,7 +14,7 @@ const ScheduleService = {
 
             const conflict = await ScheduleRepository.findConflict(start, end)
             if (conflict) {
-                return [null, [ScheduleErrorsMap.ErrorNotPermittedScheduleDueToConflict]]
+                return [null, [ScheduleMessageMap.ErrorNotPermittedScheduleDueToConflict]]
             }
 
             let clientId = scheduleToCreate.clientId
@@ -25,7 +25,7 @@ const ScheduleService = {
             }
 
             if (!clientId) {
-                return [null, [ScheduleErrorsMap.ErrorNotSentClient]]
+                return [null, [ScheduleMessageMap.ErrorNotSentClient]]
             }
 
             const newSchedule = await ScheduleRepository.create({
@@ -38,19 +38,19 @@ const ScheduleService = {
         } catch (error) {
             console.error(errorName, error)
             const errorMessage = validateScheduleError(error)
-            return [null, errorMessage || [ScheduleErrorsMap.ErrorCreationSchedule]]
+            return [null, errorMessage || [ScheduleMessageMap.ErrorCreationSchedule]]
         }
     },
     show: async (id) => {
         try {
             const schedule = await ScheduleRepository.show(id)
             if (!schedule || schedule.length === 0) {
-                return [null, [ScheduleErrorsMap.ScheduleNotFound]]
+                return [null, [ScheduleMessageMap.ScheduleNotFound]]
             }
             return [schedule, null]
         } catch (error) {
             console.error(errorName, error)
-            return [null, [ScheduleErrorsMap.ErrorShowSchedule]]
+            return [null, [ScheduleMessageMap.ErrorShowSchedule]]
         }
     },
     index: async () => {
@@ -59,7 +59,7 @@ const ScheduleService = {
             return [schedules, null]
         } catch (error) {
             console.error(errorName, error)
-            return [null, [ScheduleErrorsMap.ErrorShowSchedule]]
+            return [null, [ScheduleMessageMap.ErrorShowSchedule]]
         }
     },
 }

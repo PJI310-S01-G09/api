@@ -34,13 +34,16 @@ const validateScheduleError = (error) => {
   return error;
 };
 
-const ScheduleErrorsMap = {
+const ScheduleMessageMap = {
   ErrorCreationSchedule: "Erro ao criar agendamento",
   ErrorNotPermittedScheduleDueToConflict:
     "Agendamento não permitido - Conflito de horários",
   ErrorNotSentClient: "Informações do cliente necessárias",
   ScheduleNotFound: "Agendamento não encontrado",
   ErrorShowSchedule: "Erro ao mostrar agendamento",
+  SuccessoOnCreateSchedule: 'Agendamento criado com sucesso',
+  SuccessOnGetSchedule: 'Agendamento encontrado com sucesso',
+  SuccessOnGetSchedules: 'Agendamentos encontrados com sucesso',
 };
 
 function mapScheduleFields(schedule) {
@@ -72,7 +75,7 @@ function mapScheduleFields(schedule) {
 
 module.exports = {
   createScheduleSchema,
-  ScheduleErrorsMap,
+  ScheduleMessageMap,
   validateScheduleError,
   mapScheduleFields,
 };

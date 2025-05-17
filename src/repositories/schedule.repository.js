@@ -49,6 +49,7 @@ const ScheduleRepository = {
         "clients.email as client_email",
         "clients.phone as client_phone",
         "clients.cpf as client_cpf",
+        "clients.is_whatsapp as client_is_whatsapp",
         "clients.created_at as client_created_at",
         "clients.updated_at as client_updated_at"
       );

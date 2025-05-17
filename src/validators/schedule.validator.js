@@ -61,6 +61,7 @@ function mapScheduleFields(schedule) {
         email: schedule.client_email,
         phone: schedule.client_phone,
         cpf: schedule.client_cpf,
+        isWhatsapp: !!schedule.client_is_whatsapp,
         createdAt: schedule.client_created_at,
         updatedAt: schedule.client_updated_at,
       }

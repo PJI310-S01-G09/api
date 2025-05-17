@@ -71,7 +71,7 @@ const ClientRepository = {
             return { id: existingClient.id, ...client };
         }
     
-        const id = await ClientRepository.create(client);
+        const { id } = await ClientRepository.create(client);
         return { id, ...client }
     }
 }

@@ -35,6 +35,7 @@ const ScheduleRepository = {
         "clients.created_at as client_created_at",
         "clients.updated_at as client_updated_at"
       )
+      .orderBy('schedule.scheduled_at', 'asc')
       .first();
   
     return mapScheduleFields(schedule);

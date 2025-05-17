@@ -3,21 +3,26 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node src/main.js",
+    "start": "npm run migrate && npm run seed && node src/main.js",
     "dev": "nodemon src/main.js",
     "migrate:create": "knex migrate:make",
     "migrate": "knex migrate:latest",
     "migrate:reset": "npx knex migrate:rollback --all && npx knex migrate:latest",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "seed": "knex seed:run"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
+    "moment": "^2.30.1",
     "mysql2": "^3.14.0",
     "yup": "^1.6.1"
   },

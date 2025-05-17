@@ -28,6 +28,7 @@ const mapClientFields = (client) => {
       email: client.email,
       phone: client.phone,
       cpf: client.cpf,
+      isWhatsapp: !!client.is_whatsapp,
       createdAt: client.created_at,
       updatedAt: client.updated_at,
       schedules,
@@ -44,11 +45,14 @@ const validateClientError = (error) => {
     return error;
 }
 
-const ClientErrorsMap = {
+const ClientMessageMap = {
     ErrorCreationClient: 'Erro ao criar cliente',
     ClientNotFound: 'Cliente não encontrado',
     ErrorShowClient: 'Erro ao buscar cliente',
     ErrorShowClients: 'Erro ao buscar clientes',
+    SuccessoOnCreateClient: 'Cliente criado com sucesso',
+    SuccessOnGetClient: 'Cliente encontrado com sucesso',
+    SuccessOnGetClients: 'Clientes encontrados com sucesso',
 }
 
-module.exports = { createClientSchema, ClientErrorsMap, validateClientError, mapClientFields };
+module.exports = { createClientSchema, ClientMessageMap, validateClientError, mapClientFields };

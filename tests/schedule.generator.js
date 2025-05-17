@@ -1,42 +1,48 @@
+import request from "supertest";
+import app from "../src/app.js";
 const { faker } = require("@faker-js/faker");
 
 function generateFakeCPF() {
-  let cpf = '';
+  let cpf = "";
   for (let i = 0; i < 11; i++) {
     cpf += faker.number.int({ min: 0, max: 9 }).toString();
   }
   return cpf;
 }
 
-/**
- * Generates a schedule object with a future or offset date
- * @param {number} [daysOffset] - Optional. Number of days to shift (e.g., 2 = in 2 days, -1 = yesterday). If omitted, a random day ahead is used.
- * @param {number} duration - Duration of the service in minutes (default: 60)
- * @returns {{ scheduledAt: string, serviceDuration: number }}
- */
-export const scheduleGenerator = (daysOffset, duration = 60) => {
-  const now = new Date();
-  const scheduledDate = new Date(now);
+import { faker } from "@faker-js/faker";
 
-  const offset = typeof daysOffset === 'number'
-    ? daysOffset
-    : faker.number.int({ min: 1, max: 1000 });
+export async function getNextAvailableHour() {
+  const res = await request(app).get("/schedule/free-hours");
 
-  scheduledDate.setDate(now.getDate() + offset);
+  if (res.status !== 200 || !res.body.data || res.body.data.length === 0) {
+    throw new Error("Nenhum horário disponível encontrado");
+  }
 
-  const hour = faker.number.int({ min: 8, max: 17 });
-  const minute = faker.helpers.arrayElement([0, 15, 30, 45]);
+  const { date, slots } = res.body.data[0];
 
-  scheduledDate.setHours(hour, minute, 0, 0);
+  if (!slots || slots.length === 0) {
+    throw new Error("Nenhum slot disponível encontrado");
+  }
 
   return {
-    scheduledAt: scheduledDate.toISOString(),
+    date,
+    hour: slots[0]
+  }
+}
+
+export async function scheduleGenerator(duration = 60) {
+  const { date, hour } = await getNextAvailableHour()
+
+  const scheduledAt = `${date}T${hour}:00`;
+  return {
+    scheduledAt: scheduledAt,
     serviceDuration: duration,
   };
-};
+}
 
-export const scheduleGeneratorWithClient = (daysOffset, duration = 60) => ({
-  ...scheduleGenerator(daysOffset, duration),
+export const scheduleGeneratorWithClient = async (duration = 60) => ({
+  ...(await scheduleGenerator(duration)),
   client: {
     name: faker.person.fullName(),
     email: faker.internet.email(),

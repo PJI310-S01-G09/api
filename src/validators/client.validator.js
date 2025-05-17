@@ -13,8 +13,6 @@ const createClientSchema = yup.object({
 
 const mapClientFields = (client) => {
     if (!client) return null;
-
-    console.log(client)
   
     const schedules = client.schedules?.map(schedule => ({
       id: schedule.id,

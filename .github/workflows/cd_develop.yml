@@ -23,5 +23,5 @@ jobs:
             nvm use 22
             cd ~/api-develop
             git pull origin develop
-            npm install
+            npm ci
             pm2 restart api-develop

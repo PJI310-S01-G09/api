@@ -4,11 +4,23 @@ const tableName = 'clients'
 
 const ClientRepository = {
     create: async (client) => {
-        const [id] = await db(tableName).insert(client)
+        const [id] = await db(tableName).insert({
+            cpf: client.cpf,
+            name: client.name,
+            email: client.email,
+            phone: client.phone,
+            is_whatsapp: client.isWhatsapp ?? false,
+        })
         return { id, ...client }
     },
     update: async (id, client) => {
-        const updatedClient = await db(tableName).where({ id }).update(client).returning('*')
+        const updatedClient = await db(tableName).where({ id }).update({
+            cpf: client.cpf,
+            name: client.name,
+            email: client.email,
+            phone: client.phone,
+            is_whatsapp: client.isWhatsapp,
+        }).returning('*')
         return updatedClient
     },
     show: async (id) => {
@@ -55,14 +67,10 @@ const ClientRepository = {
             .first();
     
         if (existingClient) {
-            await db(tableName)
-                .where({ id: existingClient.id })
-                .update(client);
-            return { id: existingClient.id, ...client };
+            return await ClientRepository.update(existingClient.id, client)
         }
     
-        const [id] = await db(tableName).insert(client);
-        return { id, ...client };
+        return await ClientRepository.create(client);
     }
 }
 

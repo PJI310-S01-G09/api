@@ -13,6 +13,8 @@ const createClientSchema = yup.object({
 
 const mapClientFields = (client) => {
     if (!client) return null;
+
+    console.log(client)
   
     const schedules = client.schedules?.map(schedule => ({
       id: schedule.id,
@@ -28,6 +30,7 @@ const mapClientFields = (client) => {
       email: client.email,
       phone: client.phone,
       cpf: client.cpf,
+      isWhatsapp: !!client.is_whatsapp,
       createdAt: client.created_at,
       updatedAt: client.updated_at,
       schedules,

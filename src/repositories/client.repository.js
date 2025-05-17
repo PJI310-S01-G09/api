@@ -67,10 +67,12 @@ const ClientRepository = {
             .first();
     
         if (existingClient) {
-            return await ClientRepository.update(existingClient.id, client)
+            await ClientRepository.update(existingClient.id, client)
+            return { id: existingClient.id, ...client };
         }
     
-        return await ClientRepository.create(client);
+        const id = await ClientRepository.create(client);
+        return { id, ...client }
     }
 }
 
